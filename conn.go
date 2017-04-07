@@ -11,7 +11,6 @@ import (
 	"io"
 	"net"
 	"os"
-	"os/user"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -165,11 +164,11 @@ func (c *conn) handlePgpass(o values) {
 	if filename == "" {
 		// XXX this code doesn't work on Windows where the default filename is
 		// XXX %APPDATA%\postgresql\pgpass.conf
-		user, err := user.Current()
-		if err != nil {
-			return
-		}
-		filename = filepath.Join(user.HomeDir, ".pgpass")
+    var homeDir = os.Getenv("HOME")
+    if homeDir == "" {
+      return
+    }
+		filename = filepath.Join(homeDir, ".pgpass")
 	}
 	fileinfo, err := os.Stat(filename)
 	if err != nil {
